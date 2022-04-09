@@ -1,0 +1,80 @@
+SPDX-FileCopyrightText: 2022 Brian Kubisiak <brian@kubisiak.com>
+SPDX-License-Identifier: GPL-3.0-or-later
+
+NVIDIA is pretty bad about ensuring that their code actually builds with a
+variety of compilers...
+
+diff --git a/kernel/nvidia/drivers/platform/tegra/central_actmon/actmon_common.c b/kernel/nvidia/drivers/platform/tegra/central_actmon/actmon_common.c
+index 6c67ec08d..a2cff0265 100644
+--- a/kernel/nvidia/drivers/platform/tegra/central_actmon/actmon_common.c
++++ b/kernel/nvidia/drivers/platform/tegra/central_actmon/actmon_common.c
+@@ -1026,7 +1026,7 @@ static int actmon_reset_deinit(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-int tegra_actmon_register(struct actmon_drv_data *actmon_data)
++int __init tegra_actmon_register(struct actmon_drv_data *actmon_data)
+ {
+ 	struct device_node *dn = NULL;
+ 	struct platform_device *pdev;
+diff --git a/kernel/kernel-4.9/drivers/irqchip/irq-gic.c b/kernel/kernel-4.9/drivers/irqchip/irq-gic.c
+index 104482acf071..27dbfb4c0970 100644
+--- a/kernel/kernel-4.9/drivers/irqchip/irq-gic.c
++++ b/kernel/kernel-4.9/drivers/irqchip/irq-gic.c
+@@ -651,7 +651,7 @@ static struct irq_chip gic_chip = {
+ };
+ 
+ #ifdef CONFIG_FIQ
+-static void __init gic_init_fiq(struct gic_chip_data *gic)
++static void gic_init_fiq(struct gic_chip_data *gic)
+ {
+ 	void __iomem *dist_base = gic_data_dist_base(gic);
+ 
+diff --git a/kernel/kernel-4.9/scripts/Kbuild.include b/kernel/kernel-4.9/scripts/Kbuild.include
+index 84faec0cc2ce..3502017731d5 100644
+--- a/kernel/kernel-4.9/scripts/Kbuild.include
++++ b/kernel/kernel-4.9/scripts/Kbuild.include
+@@ -462,7 +462,7 @@ endef
+ # we'll need it to convert the path string to list (string delimited by spaces)
+ # and vice versa
+ the-space :=
+-the-space += 
++the-space += $(the-space) $(the-space)
+ # TEGRA_ROOT_PATH is the relative path to the directory one level upper than $srctree
+ _TEGRA_ROOT_PATH = $(subst ^$(realpath $(srctree)/..)/,,^$(realpath $(kbuild-dir)))
+ # _TEGRA_REL_PATH is path like "../../../" that points to directory one level
+diff --git a/kernel/nvidia/drivers/misc/eventlib/utility.h b/kernel/nvidia/drivers/misc/eventlib/utility.h
+index a62898b1e..764cf8acb 100644
+--- a/kernel/nvidia/drivers/misc/eventlib/utility.h
++++ b/kernel/nvidia/drivers/misc/eventlib/utility.h
+@@ -125,7 +125,7 @@ static inline uint64_t increment64(volatile uint64_t *addr)
+ 	return prev;
+ }
+ 
+-#if defined(__aarch64__) && defined(__GNUC__) && (__GNUC__ >= 11)
++#if defined(__aarch64__) && defined(__GNUC__) && (__GNUC__ >= 10)
+ 
+ static inline uint32_t
+ tracebuf_sync_fetch_and_or_u32(uint32_t *ptr, uint32_t value)
+diff --git a/kernel/nvidia/drivers/net/can/mttcan/native/m_ttcan_linux.c b/kernel/nvidia/drivers/net/can/mttcan/native/m_ttcan_linux.c
+index d2def33d8..832254b9b 100644
+--- a/kernel/nvidia/drivers/net/can/mttcan/native/m_ttcan_linux.c
++++ b/kernel/nvidia/drivers/net/can/mttcan/native/m_ttcan_linux.c
+@@ -22,7 +22,7 @@
+ 
+ static void mttcan_start(struct net_device *dev);
+ 
+-static __init int mttcan_hw_init(struct mttcan_priv *priv)
++static int mttcan_hw_init(struct mttcan_priv *priv)
+ {
+ 	int err = 0;
+ 	u32 ie = 0, ttie = 0, gfc_reg = 0;
+@@ -127,7 +127,7 @@ static inline void mttcan_hw_deinit(const struct mttcan_priv *priv)
+ 	ttcan_set_init(ttcan);
+ }
+ 
+-static __init int mttcan_hw_reinit(const struct mttcan_priv *priv)
++static int mttcan_hw_reinit(const struct mttcan_priv *priv)
+ {
+ 	int err = 0;
+ 

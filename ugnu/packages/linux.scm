@@ -3,6 +3,7 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (ugnu packages linux)
+  #:use-module (uguix deb-download)
   #:use-module (uguix git-download)
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
@@ -15,11 +16,13 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages vim)
+  #:use-module (guix build-system copy)
   #:use-module (guix build-system gnu)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
-  #:use-module ((guix licenses) #:prefix license:))
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (nonguix licenses))
 
 ;;; Commentary:
 ;;;
@@ -156,5 +159,38 @@
       (synopsis "Linux kernel for the NVIDIA Tegra")
       (description "Linux kernel for the NVIDIA Tegra.")
       (license license:gpl2))))
+
+(define-public tegra-firmware
+  (package
+    (name "tegra-firmware")
+    (version "32.7.1")
+    (source
+     (origin
+       (method url-fetch/deb)
+       (uri
+        (string-append "https://repo.download.nvidia.com/jetson/"
+                       "t194"
+                       "/pool/main/n/nvidia-l4t-firmware/nvidia-l4t-firmware_"
+                       version
+                       "-20220219090344_arm64.deb"))
+       (sha256
+        (base32
+         "1b2bs3wqyw439fpnpljjj6krjdxx139pwsnpmhbbhpsfq9ka1bxd"))))
+    (build-system copy-build-system)
+    (arguments
+     '(#:install-plan
+       '(("lib/firmware" "lib/firmware"))))
+    (home-page "http://developer.nvidia.com/jetson")
+    (synopsis "NVIDIA Firmware Package")
+    (description
+     "NVIDIA's nonfree firmware blobs for enabling hardware support for the
+Tegra's hardware. Extracted from NVIDIA's L4T firmware.")
+    (license
+     (list
+      (nonfree "file://usr/share/doc/nvidia-l4t-firmware/copyright")
+      (nonfree "file://usr/share/doc/nvidia-tegra/LICENSE.cypress_wifibt.gz")
+      (nonfree
+       "file://usr/share/doc/nvidia-tegra/LICENSE.realtek_8822ce_wifibt.gz")))))
+
 
 ;;; linux.scm ends here

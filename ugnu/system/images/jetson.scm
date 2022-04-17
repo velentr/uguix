@@ -88,7 +88,8 @@ MENU TITLE uGuix4Tegra Boot Options
                           (mount-point "/")
                           (type "ext4"))
                         %base-file-systems))
-    (packages (cons linux-firmware %base-packages))
+    (packages (append (list tegra-firmware linux-firmware)
+                      %base-packages))
     ;; shepherd-0.9 depends on guile-fibers, which does not cross-compile (see
     ;; #54793); point at shepherd-0.8 instead
     (essential-services

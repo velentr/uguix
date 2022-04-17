@@ -68,7 +68,7 @@ MENU TITLE uGuix4Tegra Boot Options
 (define jetson-bootloader
   (bootloader
    (name 'jetson-bootloader)
-   (package syslinux)  ;; TODO: do we actually need this?
+   (package #f)
    (installer #f)
    (configuration-file "/boot/extlinux/extlinux.conf")
    (configuration-file-generator jetson-bootloader-configuration-file)))
@@ -99,19 +99,6 @@ MENU TITLE uGuix4Tegra Boot Options
                                               (inherit config)
                                               (shepherd shepherd-0.8)))))))
 
-(define-public jetson-image-type
-  (image-type
-   (name 'jetson-raw)
-   (constructor (lambda (os)
-                  (image-with-os (raw-with-offset-disk-image) os)))))
+jetson-barebones-os
 
-(define jetson-barebones-raw-image
-  (image
-   (inherit
-    (os+platform->image jetson-barebones-os aarch64-linux
-                        #:type jetson-image-type))
-   (name 'jetson-barebones-raw-image)))
-
-jetson-barebones-raw-image
-
-;;; xavier-nx.scm ends here
+;;; jetson.scm ends here

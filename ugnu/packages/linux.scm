@@ -192,5 +192,34 @@ Tegra's hardware. Extracted from NVIDIA's L4T firmware.")
       (nonfree
        "file://usr/share/doc/nvidia-tegra/LICENSE.realtek_8822ce_wifibt.gz")))))
 
+(define-public tegra-xusb-firmware
+  (package
+    (name "tegra-xusb-firmware")
+    (version "32.7.1")
+    (source
+     (origin
+       (method url-fetch/deb)
+       (uri
+        (string-append
+         "https://repo.download.nvidia.com/jetson/"
+         "t194"
+         "/pool/main/n/nvidia-l4t-xusb-firmware/nvidia-l4t-xusb-firmware_"
+         version
+         "-20220219090344_arm64.deb"))
+       (sha256
+        (base32
+         "1qc2ckkxsy6f02gvsn0f8435ids2j479644j6s8ckjmm14sh4rfs"))))
+    (build-system copy-build-system)
+    (arguments
+     '(#:install-plan
+       '(("lib/firmware" "lib/firmware"))))
+    (home-page "http://developer.nvidia.com/jetson")
+    (synopsis "NVIDIA XUSB Firmware Package")
+    (description
+     "NVIDIA's nonfree firmware blobs for enabling hardware support for the
+Tegra's usb hardware. Extracted from NVIDIA's L4T firmware.")
+    (license
+      (nonfree "file://usr/share/doc/nvidia-l4t-xusb-firmware/copyright"))))
+
 
 ;;; linux.scm ends here

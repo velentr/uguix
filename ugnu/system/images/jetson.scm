@@ -89,15 +89,7 @@ MENU TITLE uGuix4Tegra Boot Options
                           (type "ext4"))
                         %base-file-systems))
     (packages (append (list tegra-firmware linux-firmware)
-                      %base-packages))
-    ;; shepherd-0.9 depends on guile-fibers, which does not cross-compile (see
-    ;; #54793); point at shepherd-0.8 instead
-    (essential-services
-     (modify-services (operating-system-default-essential-services
-                       this-operating-system)
-       (shepherd-root-service-type config => (shepherd-configuration
-                                              (inherit config)
-                                              (shepherd shepherd-0.8)))))))
+                      %base-packages))))
 
 jetson-barebones-os
 

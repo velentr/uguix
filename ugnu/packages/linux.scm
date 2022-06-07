@@ -21,6 +21,7 @@
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
+  #:use-module (guix platform)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (nonguix licenses))
 
@@ -111,9 +112,10 @@
                 (setenv "KBUILD_BUILD_TIMESTAMP" (getenv "SOURCE_DATE_EPOCH"))
                 (setenv "KBUILD_BUILD_USER" "guix")
                 (setenv "KBUILD_BUILD_HOST" "guix")
-                (let ((arch #$(system->linux-architecture
-                               (or (%current-target-system)
-                                   (%current-system)))))
+                (let ((arch #$(platform-linux-architecture
+                               (lookup-platform-by-target-or-system
+                                (or (%current-target-system)
+                                    (%current-system))))))
                   (setenv "ARCH" arch))
                 (when target
                   (setenv "CROSS_COMPILE" (string-append target "-")))
